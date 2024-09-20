@@ -1,10 +1,30 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
 
 function App() {
 	const [count, setCount] = useState(0);
+	const [backendData, setBackendData] = useState(""); // State to store backend response
+	const apiUrl = "http://127.0.0.1:5000/api"; // URL variable
+
+	useEffect(() => {
+		const fetchData = async () => {
+			try {
+				const response = await fetch(apiUrl);
+				if (response.ok) {
+					const data = await response.json();
+					setBackendData(data.message);
+				} else {
+					console.error("Failed to fetch data");
+				}
+			} catch (error) {
+				console.error("Error fetching data:", error);
+			}
+		};
+
+		fetchData(); // Call the function to fetch data
+	}, [apiUrl]);
 
 	return (
 		<>
@@ -16,14 +36,11 @@ function App() {
 					<img src={reactLogo} className="logo react" alt="React logo" />
 				</a>
 			</div>
-			<h1>Hello world</h1>
+			<h1>AccessAI</h1>
 			<div className="card">
-				<button onClick={() => setCount((count) => 1)}>count is {count}</button>
-				<p>
-					Edit <code>src/App.jsx</code> and save to test HMR
-				</p>
+				<button onClick={() => setCount(1)}>count is {count}</button>
 			</div>
-			<p className="read-the-docs">Click on the Vite and React logos to learn more</p>
+			<p className="backend-response">{backendData ? backendData : "Loading..."}</p>
 		</>
 	);
 }
