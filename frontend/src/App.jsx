@@ -1,30 +1,29 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
 
 function App() {
-	const [count, setCount] = useState(0);
-	const [backendData, setBackendData] = useState(""); // State to store backend response
+	const [backendData, setBackendData] = useState("");
+	const [loading, setLoading] = useState(false);
 	const apiUrl = "http://127.0.0.1:5000/api"; // URL variable
 
-	useEffect(() => {
-		const fetchData = async () => {
-			try {
-				const response = await fetch(apiUrl);
-				if (response.ok) {
-					const data = await response.json();
-					setBackendData(data.message);
-				} else {
-					console.error("Failed to fetch data");
-				}
-			} catch (error) {
-				console.error("Error fetching data:", error);
+	const handleFetchData = async () => {
+		setLoading(true);
+		try {
+			const response = await fetch(apiUrl);
+			if (response.ok) {
+				const data = await response.json();
+				setBackendData(data.message);
+			} else {
+				console.error("Failed to fetch data");
 			}
-		};
-
-		fetchData(); // Call the function to fetch data
-	}, [apiUrl]);
+		} catch (error) {
+			console.error("Error fetching data:", error);
+		} finally {
+			setLoading(false);
+		}
+	};
 
 	return (
 		<>
@@ -38,9 +37,13 @@ function App() {
 			</div>
 			<h1>AccessAI</h1>
 			<div className="card">
-				<button onClick={() => setCount(1)}>count is {count}</button>
+				<button onClick={handleFetchData} disabled={loading}>
+					{loading ? "Loading..." : "Get response"}
+				</button>
 			</div>
-			<p className="backend-response">{backendData ? backendData : "Loading..."}</p>
+			<p className="backend-response">
+				{backendData ? backendData : loading ? "Loading..." : "Click the button to get the response"}
+			</p>
 		</>
 	);
 }
