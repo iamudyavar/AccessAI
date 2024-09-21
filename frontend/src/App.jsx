@@ -1,37 +1,44 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
 
+function SuggestionCard({ title, suggestion }) {
+	return (
+		<div className="suggestion-card">
+			<h3>{title}</h3>
+			<p>{suggestion}</p>
+		</div>
+	);
+}
+
 function App() {
-	const [inputText, setInputText] = useState(""); // For user input
-	const [responseText, setResponseText] = useState(""); // For LLM response
+	const [inputText, setInputText] = useState("");
+	const [suggestions, setSuggestions] = useState([]);
 	const [loading, setLoading] = useState(false);
+	const [submitted, setSubmitted] = useState(false);
 	const apiUrl = "http://127.0.0.1:5000/api"; // Replace with actual backend API URL
 
-	// Handle change in textarea input
 	const handleInputChange = (e) => {
 		setInputText(e.target.value);
 	};
 
-	// Submit input to backend and fetch the LLM response
 	const handleSubmit = async () => {
 		if (!inputText.trim()) {
 			alert("Please enter some code!");
 			return;
 		}
-
 		setLoading(true);
+		setSubmitted(true);
 		try {
 			const response = await fetch(apiUrl, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ code: inputText }),
 			});
-
 			if (response.ok) {
 				const data = await response.json();
-				setResponseText(data.message);
+				setSuggestions(data.suggestions);
 			} else {
 				console.error("Error fetching response:", response.statusText);
 			}
@@ -43,24 +50,22 @@ function App() {
 	};
 
 	return (
-		<div className="app">
-			{/* Header with logos */}
-			<header className="app-header">
-				<div className="logos">
-					<a href="https://vitejs.dev" target="_blank" rel="noreferrer">
-						<img src={viteLogo} className="logo" alt="Vite logo" />
-					</a>
-					<a href="https://react.dev" target="_blank" rel="noreferrer">
-						<img src={reactLogo} className="logo react" alt="React logo" />
-					</a>
-				</div>
-				<h1>AccessAI</h1>
-			</header>
-
-			{/* Main container */}
-			<main className="content-container">
-				{/* Input box for user code */}
-				<section className="input-section">
+		<div className={`app ${submitted ? "submitted" : ""}`}>
+			<div className="input-container">
+				{!submitted && (
+					<header className="app-header">
+						<div className="logos">
+							<a href="https://vitejs.dev" target="_blank" rel="noreferrer">
+								<img src={viteLogo} className="logo" alt="Vite logo" />
+							</a>
+							<a href="https://react.dev" target="_blank" rel="noreferrer">
+								<img src={reactLogo} className="logo react" alt="React logo" />
+							</a>
+						</div>
+						<h1>AccessAI</h1>
+					</header>
+				)}
+				<div className="input-section">
 					<h2>Enter Your Code</h2>
 					<textarea
 						value={inputText}
@@ -71,22 +76,25 @@ function App() {
 					<button onClick={handleSubmit} disabled={loading}>
 						{loading ? "Processing..." : "Submit to LLM"}
 					</button>
-				</section>
-
-				{/* Output box for LLM response */}
-				<section className="output-section">
-					<h2>LLM Model Response</h2>
-					<div className="response-box">
-						{loading ? (
-							<p className="loading-text">Loading...</p>
-						) : responseText ? (
-							<pre>{responseText}</pre>
-						) : (
-							<p className="placeholder-text">The LLM response will appear here.</p>
-						)}
-					</div>
-				</section>
-			</main>
+				</div>
+			</div>
+			{submitted && (
+				<div className="output-container">
+					{loading ? (
+						<p className="loading-text">Loading...</p>
+					) : (
+						<div className="suggestion-list">
+							{suggestions.map((suggestion, index) => (
+								<SuggestionCard
+									key={index}
+									title={suggestion.suggestionTitle}
+									suggestion={suggestion.suggestion}
+								/>
+							))}
+						</div>
+					)}
+				</div>
+			)}
 		</div>
 	);
 }

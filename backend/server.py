@@ -2,6 +2,9 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import boto3
 from botocore.exceptions import ClientError
+import instructor
+from anthropic import AnthropicBedrock
+from pydantic import BaseModel
 
 # Setup
 app = Flask(__name__)
@@ -13,6 +16,16 @@ bedrock_agent_runtime_client = boto3.client(
 model_id = "anthropic.claude-3-5-sonnet-20240620-v1:0"
 kb_id = "MOIU1QHB3M"
 model_arn = "arn:aws:bedrock:us-east-1::foundation-model/anthropic.claude-3-5-sonnet-20240620-v1:0"
+
+
+# Structured suggestion setup
+class Suggestion(BaseModel):
+    suggestionTitle: str
+    suggestion: str
+
+
+class MultipleSuggestions(BaseModel):
+    suggestions: list[Suggestion]
 
 
 # Routes
@@ -33,27 +46,25 @@ def getLLMResponse():
             Return your results as a list. Respond as if you are talking to a website developer looking for guidance, and do not repeat the prompt in your answer.
             Only point out accessibility issues as a list. Do not provide any other information before or after the list.
             Provide the specific line of code that needs to be changed for each list element, if a change is necessary.
-            Next to each of your suggestions, add parentheses with the specifc WCAG 2.2 issue name.
+            Next to each of your suggestions, add parentheses with the specifc WCAG 2.2 issue name and section number.
             If the user does not provide website code, simply return "Sorry, I can't help with that."
             """
 
-        conversation = [
-            {
-                "role": "user",
-                "content": [{"text": user_message}],
-            },
-        ]
+        structured_response = getStructuredResponse(user_message, prompt)
 
-        # Send message to Bedrock
-        response = client.converse(
-            system=[{"text": prompt}],
-            modelId=model_id,
-            messages=conversation,
-            inferenceConfig={"maxTokens": 512, "temperature": 0.5, "topP": 0.9},
-        )
+        # Creating the dictionary
+        result = {"suggestions": []}
 
-        # Extract the LLM response from Bedrock
-        response_text = response["output"]["message"]["content"][0]["text"]
+        # Iterating over the array and populating the dictionary
+        for suggestion_obj in structured_response:
+            result["suggestions"].append(
+                {
+                    "suggestionTitle": suggestion_obj.suggestionTitle,
+                    "suggestion": suggestion_obj.suggestion,
+                }
+            )
+
+        return result
 
         # # Augment the response with the knowledge base
         # augmented_prompt = """
@@ -92,18 +103,6 @@ def getLLMResponse():
         #     },
         # )
 
-        # Return the LLM response back to the frontend
-        return (
-            jsonify(
-                {
-                    "message": response_text
-                    # + "\n\nWCGAG Information:\n\n"
-                    # + augmented_info["output"]["text"]
-                }
-            ),
-            200,
-        )
-
     except ClientError as e:
         print(f"ERROR: Unable to invoke '{model_id}'. Reason: {e}")
         return jsonify({"message": "Error invoking Amazon Bedrock"}), 500
@@ -111,6 +110,30 @@ def getLLMResponse():
     except Exception as e:
         print(f"Unexpected error: {e}")
         return jsonify({"message": "An unexpected error occurred"}), 500
+
+
+# Helper function to get structured response
+def getStructuredResponse(user_message, prompt):
+    client = instructor.from_anthropic(AnthropicBedrock())
+
+    resp = client.messages.create(
+        model="anthropic.claude-3-5-sonnet-20240620-v1:0",
+        max_tokens=1024,
+        messages=[
+            {
+                "role": "system",
+                "content": prompt,
+            },
+            {
+                "role": "user",
+                "content": user_message,
+            },
+        ],
+        response_model=MultipleSuggestions,
+    )
+
+    assert isinstance(resp, MultipleSuggestions)
+    return resp.suggestions
 
 
 # Run the application
