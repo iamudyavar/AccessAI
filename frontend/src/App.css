@@ -1,147 +1,201 @@
+:root {
+	--primary-color: #f2e6b6;
+	--secondary-color: #e6d696;
+	--text-color: #333333;
+	--background-color: #ffffff;
+	--input-background: #f0f8ff; /* Light blue, complementary to pale yellow */
+	--button-color: #4a90e2;
+	--button-hover-color: #357abd;
+}
+
+body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell",
+		"Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	margin: 0;
+	padding: 0;
+	background-color: var(--background-color);
+	color: var(--text-color);
+}
+
 /* Main app container */
 .app {
-  width: 100%;
-  margin: 50px auto;
-  padding: 2rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center; 
-  justify-content: center;
-  /* background-color: black; */
-} 
-
+	min-height: 100vh;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	background: linear-gradient(135deg, rgba(242, 230, 182, 0.3), rgba(230, 214, 150, 0.3)),
+		linear-gradient(
+			45deg,
+			rgba(242, 230, 182, 0.1) 25%,
+			transparent 25%,
+			transparent 75%,
+			rgba(230, 214, 150, 0.1) 75%,
+			rgba(230, 214, 150, 0.1)
+		),
+		linear-gradient(
+			45deg,
+			rgba(230, 214, 150, 0.1) 25%,
+			transparent 25%,
+			transparent 75%,
+			rgba(242, 230, 182, 0.1) 75%,
+			rgba(242, 230, 182, 0.1)
+		);
+	background-size: 100% 100%, 60px 60px, 60px 60px;
+	background-position: 0 0, 30px 30px, 0 0;
+}
 
 /* Header styles */
 .app-header {
-  display: flex;
-  align-items: center; /* Align logos and title vertically */
-  gap: 1rem; /* Space between logos and title */
-  margin-bottom: 2rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 1rem;
+	width: 100%;
+	padding: 2rem 0;
 }
 
-/* Flexbox to move logos and title to the top left */
 .logos {
-  display: flex;
-  gap: 1rem; /* Space between the two logos */
+	display: flex;
+	gap: 1rem;
 }
 
 .logo {
-  height: 3.5em;
-  transition: filter 0.3s ease;
+	height: 3em;
+	transition: filter 0.3s ease;
 }
 
 .logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+	filter: brightness(1.2);
 }
 
 h1 {
-  font-size: 2.5rem;
-  color: #2c3e50;
-  margin: 0;
+	font-size: 2.5rem;
+	color: var(--text-color);
+	margin: 0;
+	font-weight: 700;
 }
 
-
 .content-container {
-  display: flex;
-  justify-content: center;
-  gap: 3rem;
-  width: 100%;
-  max-width: 90%;
-  flex-wrap: wrap;
-  margin-top: 0;
-  padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 2rem;
+	width: 100%;
+	max-width: 800px;
+	padding: 2rem;
+	box-sizing: border-box;
 }
 
 /* Input and output sections */
 .input-section,
 .output-section {
-  width: 100%;
-  background-color: #fff;
-  padding: 20px; /* Re-enable padding */
-  border-radius: 10px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box; /* Ensure padding and border are included in the width */
+	background-color: var(--input-background);
+	padding: 1.5rem;
+	border-radius: 8px;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+	font-size: 1.25rem;
+	color: var(--text-color);
+	margin-top: 0;
+	margin-bottom: 1rem;
 }
 
 /* Textarea styles */
 textarea {
-  width: 100%; /* Make sure the textarea takes the full width of its parent */
-  background-color: #eef6ff;
-  padding: 15px;
-  border-radius: 8px;
-  border: 1px solid #dfe6e9;
-  font-family: 'Courier New', monospace;
-  font-size: 1rem;
-  white-space: pre-wrap;
-  overflow-y: auto;
-  min-height: 200px;
-  flex-grow: 1;
-  box-sizing: border-box; /* Ensure padding and border are included in the width */
-  max-width: 100%; /* Prevent overflow */
-  resize: vertical; /* Allow vertical resizing, but not horizontal */
+	width: 100%;
+	background-color: var(--background-color);
+	padding: 0.75rem;
+	border-radius: 4px;
+	border: 1px solid #cccccc;
+	font-size: 1rem;
+	line-height: 1.5;
+	min-height: 150px;
+	resize: vertical;
+	margin-bottom: 1rem;
+	transition: border-color 0.3s ease;
 }
 
-
 textarea:focus {
-  border-color: #3498db;
-  outline: none;
+	border-color: var(--button-color);
+	outline: none;
+	box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.25);
 }
 
 button {
-  padding: 12px;
-  background-color: #3498db;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: opacity 0.3s ease;
+	padding: 0.5rem 1rem;
+	background-color: var(--button-color);
+	color: white;
+	border: none;
+	border-radius: 4px;
+	font-size: 1rem;
+	font-weight: 600;
+	cursor: pointer;
+	transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+button:hover {
+	background-color: var(--button-hover-color);
+}
+
+button:active {
+	transform: scale(0.98);
 }
 
 button:disabled {
-  background-color: #dcdcdc;
-  cursor: not-allowed;
-  opacity: 0.6;
+	background-color: #95a5a6;
+	cursor: not-allowed;
 }
 
 /* Response box */
 .response-box {
-  background-color: #eef6ff;
-  padding: 15px;
-  border-radius: 8px;
-  border: 1px solid #dfe6e9;
-  font-family: 'Courier New', monospace;
-  font-size: 1rem;
-  white-space: pre-wrap;
-  overflow-y: scroll;
-  min-height: 200px;
-  flex-grow: 1;
+	background-color: var(--background-color);
+	padding: 0.75rem;
+	border-radius: 4px;
+	border: 1px solid #cccccc;
+	font-size: 1rem;
+	line-height: 1.5;
+	white-space: pre-wrap;
+	word-wrap: break-word;
+	overflow-wrap: break-word;
+	overflow-y: auto;
+	min-height: 150px;
+	max-height: 400px; /* Limit the height and enable vertical scrolling if needed */
 }
 
-.loading-text {
-  color: #3498db;
-  font-weight: bold;
+pre {
+	font-family: "Consolas", "Monaco", "Andale Mono", "Ubuntu Mono", monospace;
+	margin: 0;
+	white-space: pre-wrap;
+	word-wrap: break-word;
+	overflow-wrap: break-word;
 }
 
+.loading-text,
 .placeholder-text {
-  color: #7f8c8d;
+	color: #7f8c8d;
 }
 
 /* Responsive design */
-@media (max-width: 768px) {
-  .content-container {
-    flex-direction: column;
-    gap: 20px;
-  }
+@media (max-width: 600px) {
+	.app-header {
+		flex-direction: column;
+		text-align: center;
+	}
 
-  .input-section,
-  .output-section {
-    flex-basis: 100%;
-  }
+	h1 {
+		font-size: 2rem;
+	}
+
+	.content-container {
+		padding: 1rem;
+	}
+
+	.input-section,
+	.output-section {
+		padding: 1rem;
+	}
 }

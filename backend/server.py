@@ -1,15 +1,3 @@
-# from flask import Flask
-# from flask_cors import CORS
-
-# app = Flask(__name__)
-# CORS(app)
-
-
-# @app.route("/api")
-# def get_info():
-#     return {"message": "Information from the backend"}
-
-
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import boto3
@@ -17,20 +5,23 @@ from botocore.exceptions import ClientError
 
 # Setup
 app = Flask(__name__)
-CORS(app)  # Allows cross-origin requests
+CORS(app)
 client = boto3.client("bedrock-runtime", region_name="us-east-1")
 model_id = "amazon.titan-text-express-v1"
+
 
 # Routes
 @app.route("/api", methods=["POST"])
 def get_info():
     try:
-        # Get the user input from the frontend
         data = request.get_json()  # Expecting JSON with a 'code' field
         user_message = data.get("code")  # Get the code or message input
 
         if not user_message:
-            return jsonify({"message": "No input provided"}), 400  # Bad request if no input is sent
+            return (
+                jsonify({"message": "No input provided"}),
+                400,
+            )
 
         # Prepare conversation to send to Amazon Bedrock
         conversation = [
