@@ -153,6 +153,17 @@ button:disabled {
 	text-align: center;
 }
 
+.suggestion-section,
+.visual-suggestion-section {
+	margin-bottom: 20px; /* Space between sections */
+}
+
+.suggestion-list,
+.visual-suggestion-list {
+	display: grid; /* If you're using grid layout */
+	gap: 10px; /* Space between suggestion cards */
+}
+
 @media (max-width: 768px) {
 	.app {
 		flex-direction: column;
