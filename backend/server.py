@@ -7,12 +7,12 @@ from botocore.exceptions import ClientError
 app = Flask(__name__)
 CORS(app)
 client = boto3.client("bedrock-runtime", region_name="us-east-1")
-model_id = "amazon.titan-text-express-v1"
+model_id = "anthropic.claude-3-5-sonnet-20240620-v1:0"
 
 
 # Routes
 @app.route("/api", methods=["POST"])
-def get_info():
+def getLLMResponse():
     try:
         data = request.get_json()  # Expecting JSON with a 'code' field
         user_message = data.get("code")  # Get the code or message input
@@ -23,16 +23,24 @@ def get_info():
                 400,
             )
 
-        # Prepare conversation to send to Amazon Bedrock
+        prompt = """
+            You are an assistant that reads website HTML, CSS, and JavaScript and provides specific accessibility suggestions based on WCAG 2.2 guidelines. 
+            Return your results as a list. Respond as if you are talking to a website developer looking for guidance, and do not repeat the prompt in your answer.
+            Only point out accessibility issues as a list. Do not provide any other information before or after the list.
+            Next to each of your suggestions, add parentheses with the specifc WCAG 2.2 issue name.
+            If the user does not provide website code, simply return "Sorry, I can't help with that"
+            """
+
         conversation = [
             {
                 "role": "user",
                 "content": [{"text": user_message}],
-            }
+            },
         ]
 
         # Send message to Bedrock
         response = client.converse(
+            system=[{"text": prompt}],
             modelId=model_id,
             messages=conversation,
             inferenceConfig={"maxTokens": 512, "temperature": 0.5, "topP": 0.9},
