@@ -1,16 +1,8 @@
 import { useState, useEffect } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
+import SuggestionCard from "./components/SuggestionCard";
 import "./App.css";
-
-function SuggestionCard({ title, suggestion }) {
-	return (
-		<div className="suggestion-card">
-			<h3>{title}</h3>
-			<p>{suggestion}</p>
-		</div>
-	);
-}
 
 function App() {
 	const [inputText, setInputText] = useState("");
