@@ -1,49 +1,83 @@
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
-import { useSpring, animated } from "react-spring"; // For dropdown animations
+import { useSpring, animated } from "react-spring";
+import Draggable from "react-draggable";
+import { ClipLoader } from "react-spinners";
 
 function Simulation() {
 	const location = useLocation();
 	const queryParams = new URLSearchParams(location.search);
 	const url = queryParams.get("url");
 
-	const [filter, setFilter] = useState(""); // Initial state for the filter
-	const [open, setOpen] = useState(false); // Track if dropdown is open
-	const [isAnimating, setIsAnimating] = useState(false); // Control wipe animation
+	const [filter, setFilter] = useState("");
+	const [open, setOpen] = useState(false);
+	const [isAnimating, setIsAnimating] = useState(false);
+	const [insightVisible, setInsightVisible] = useState(false);
+	const [insightLoading, setInsightLoading] = useState(false);
+	const [insightText, setInsightText] = useState("");
 
-	// Screen wipe animation control using CSS
 	const applyFilterWithAnimation = (selectedFilter) => {
 		// Start animation
 		setIsAnimating(true);
+		setInsightVisible(false); // Hide insights immediately
 
-		// Delay the filter application until the animation completes
+		const animationDuration = 500; // Duration of the wipe animation
+
 		setTimeout(() => {
-			// Apply the appropriate CSS filter for color blindness simulation
+			let text = "";
 			switch (selectedFilter) {
 				case "deuteranopia":
 					setFilter("grayscale(0.5) sepia(1) hue-rotate(-50deg) saturate(1.2) contrast(0.85)");
+					text = "This looks good! Consider using shapes to enhance clarity.";
 					break;
 				case "protanopia":
 					setFilter("grayscale(0.5) sepia(1) hue-rotate(-35deg) saturate(1.2) contrast(0.85)");
+					text = "This looks good! Ensure important elements are distinguishable.";
 					break;
 				case "tritanopia":
 					setFilter("grayscale(0.5) sepia(1) hue-rotate(90deg) saturate(1.1) contrast(0.85)");
+					text = "This looks good! Ensure high contrast for key elements.";
+					break;
+				case "achromatopsia":
+					setFilter("grayscale(1)");
+					text = "This looks good! Use textures and patterns for differentiation.";
+					break;
+				case "low-vision":
+					setFilter("blur(4px) contrast(1.5)");
+					text =
+						"Text may appear small; consider optimizing for larger fonts and higher contrast for better readability.";
+					break;
+				case "high-contrast":
+					setFilter("contrast(2) brightness(0.8)");
+					text =
+						"This looks good! High contrast can enhance visibility, but be mindful of color combinations.";
 					break;
 				default:
-					setFilter(""); // No filter for normal vision
+					setFilter(""); // Resets filter for normal vision
+					text = "";
+					setInsightLoading(false);
+					setInsightVisible(false); // Hide insights for normal vision
+					setIsAnimating(false); // Reset animation state immediately
+					return; // Exit early
 			}
 
-			// End animation after applying filter
-			setIsAnimating(false);
-		}, 500); // Adjust duration to match the wipe animation timing
+			// Show loading after animation
+			setInsightText(text);
+			setInsightVisible(true);
+			setInsightLoading(true);
+
+			setTimeout(() => {
+				setInsightLoading(false);
+				setIsAnimating(false);
+			}, 1000); // Keep the loading spinner for a while before hiding
+		}, animationDuration);
 	};
 
 	const handleFilterChange = (selectedFilter) => {
 		applyFilterWithAnimation(selectedFilter);
-		setOpen(false); // Close options after selection
+		setOpen(false);
 	};
 
-	// React Spring animation for showing options
 	const optionsAnimation = useSpring({
 		opacity: open ? 1 : 0,
 		transform: open ? `translateY(0)` : `translateY(-20px)`,
@@ -55,74 +89,55 @@ function Simulation() {
 			className="simulation-page"
 			style={{ height: "100vh", overflow: "hidden", position: "relative" }}
 		>
-			{/* Floating filter controls */}
-			<div
-				className="filter-controls"
-				style={{
-					position: "absolute",
-					top: "20px",
-					left: "20px",
-					zIndex: 2,
-					backgroundColor: "rgba(255, 255, 255, 0.9)",
-					borderRadius: "8px",
-					padding: "10px",
-					boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-				}}
-			>
-				<button
-					onClick={() => setOpen(!open)}
+			<Draggable>
+				<div
+					className="filter-controls"
 					style={{
-						backgroundColor: "#6200EA",
-						color: "#fff",
-						border: "none",
+						position: "absolute",
+						top: "20px",
+						left: "20px",
+						zIndex: 2,
+						backgroundColor: "rgba(255, 255, 255, 0.9)",
+						borderRadius: "8px",
 						padding: "10px",
-						borderRadius: "4px",
-						cursor: "pointer",
-						fontSize: "16px",
+						boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+						cursor: "move",
 					}}
 				>
-					Choose Disability
-				</button>
+					<button onClick={() => setOpen(!open)} style={getButtonStyle()}>
+						Choose Disability
+					</button>
 
-				{/* Options will show below the button */}
-				{open && (
-					<animated.div style={optionsAnimation}>
-						<ul style={{ listStyle: "none", padding: 0, margin: "10px 0" }}>
-							<li>
-								<button onClick={() => handleFilterChange("")} style={getButtonStyle()}>
-									Normal Vision
-								</button>
-							</li>
-							<li>
-								<button
-									onClick={() => handleFilterChange("deuteranopia")}
-									style={getButtonStyle()}
-								>
-									Deuteranopia (Red-Green)
-								</button>
-							</li>
-							<li>
-								<button
-									onClick={() => handleFilterChange("protanopia")}
-									style={getButtonStyle()}
-								>
-									Protanopia (Red-Green)
-								</button>
-							</li>
-							<li>
-								<button
-									onClick={() => handleFilterChange("tritanopia")}
-									style={getButtonStyle()}
-								>
-									Tritanopia (Blue-Yellow)
-								</button>
-							</li>
-						</ul>
-					</animated.div>
-				)}
-			</div>
+					{open && (
+						<animated.div style={optionsAnimation}>
+							<ul style={{ listStyle: "none", padding: 0, margin: "10px 0" }}>
+								{[
+									{ name: "Normal Vision", value: "" },
+									{
+										name: "Red-Green Colorblindness (Deuteranopia)",
+										value: "deuteranopia",
+									},
+									{ name: "Red-Green Colorblindness (Protanopia)", value: "protanopia" },
+									{ name: "Blue-Yellow Colorblindness (Tritanopia)", value: "tritanopia" },
+									{ name: "Achromatopsia", value: "achromatopsia" },
+									{ name: "Low Vision", value: "low-vision" },
+									{ name: "High Contrast", value: "high-contrast" },
+								].map(({ name, value }) => (
+									<li key={value}>
+										<button
+											onClick={() => handleFilterChange(value)}
+											style={getButtonStyle()}
+										>
+											{name}
+										</button>
+									</li>
+								))}
+							</ul>
+						</animated.div>
+					)}
+				</div>
+			</Draggable>
 
-			{/* Screen wipe effect when filter changes */}
 			<div
 				className={`wipe-animation ${isAnimating ? "active" : ""}`}
 				style={{
@@ -134,11 +149,10 @@ function Simulation() {
 					backgroundColor: "rgba(255, 255, 255, 0.9)",
 					transition: "transform 0.5s ease-out",
 					transform: isAnimating ? "translateX(0)" : "translateX(-100%)",
-					zIndex: 1, // Ensure it is above iframe but behind controls
+					zIndex: 1,
 				}}
 			></div>
 
-			{/* Render the full-screen iframe if URL is present */}
 			{url ? (
 				<iframe
 					src={url}
@@ -147,7 +161,7 @@ function Simulation() {
 					height="100%"
 					style={{
 						border: "none",
-						filter: filter, // Apply the filter dynamically
+						filter: filter,
 						position: "absolute",
 						top: 0,
 						left: 0,
@@ -158,20 +172,55 @@ function Simulation() {
 			) : (
 				<p>No URL provided</p>
 			)}
+
+			{/* AI Powered Insights Box */}
+			{insightVisible && (
+				<div
+					className="ai-insights"
+					style={{
+						position: "absolute",
+						bottom: "20px",
+						left: "20px",
+						border: "5px solid transparent",
+						padding: "15px",
+						boxShadow: "0 4px 12px rgba(0, 0, 0, 0.3)",
+						zIndex: 2,
+						width: "250px",
+						fontSize: "16px",
+						backgroundColor: "#fff",
+						borderImage: "linear-gradient(135deg, #FFEB3B, #FFFFFF, #2196F3) 1",
+					}}
+				>
+					<h4 style={{ margin: 0 }}>AI Insights</h4>
+					{insightLoading ? (
+						<div
+							style={{
+								display: "flex",
+								justifyContent: "center",
+								alignItems: "center",
+								height: "50px",
+							}}
+						>
+							<ClipLoader size={25} color={"#333"} loading={insightLoading} />
+						</div>
+					) : (
+						<p>{insightText}</p>
+					)}
+				</div>
+			)}
 		</div>
 	);
 }
 
 export default Simulation;
 
-// Helper function for button styles
 function getButtonStyle() {
 	return {
 		backgroundColor: "#f0f0f0",
 		color: "#333",
 		border: "none",
-		padding: "8px 16px",
-		margin: "4px 0",
+		padding: "10px 20px",
+		margin: "8px 0",
 		borderRadius: "4px",
 		cursor: "pointer",
 		width: "100%",
