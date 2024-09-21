@@ -173,7 +173,6 @@ function App() {
 
 							{visualSuggestions.length > 0 && (
 								<div className="visual-suggestion-section" style={{ marginTop: "20px" }}>
-									<h3 style={{ textAlign: "center" }}>Visual Suggestions</h3>
 									<div className="visual-suggestion-list">
 										{visualSuggestions.map((suggestion, index) => (
 											<SuggestionCard

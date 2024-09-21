@@ -5,7 +5,8 @@ from botocore.exceptions import ClientError
 import instructor
 from anthropic import AnthropicBedrock
 from pydantic import BaseModel
-import os
+import base64
+import json
 
 # Setup
 app = Flask(__name__)
@@ -42,16 +43,7 @@ def getLLMResponse():
 
         # Scenario 1: User provides an image
         if image:
-            return jsonify(
-                {
-                    "suggestions": [
-                        {
-                            "suggestionTitle": "You sent an image",
-                            "suggestion": "Placeholder for image suggestion",
-                        }
-                    ]
-                }
-            )
+            return process_image(image)
 
         # Scenario 2: User provides a file
         if file:
@@ -102,11 +94,74 @@ def getLLMResponse():
         return jsonify({"message": "An unexpected error occurred"}), 500
 
 
+# Function to handle image input
+def process_image(file):
+    prompt = """
+        You are an assistant that reads a website screenshot and provides specific accessibility suggestions based on WCAG 2.2 guidelines.
+        Consider things like contrast, color, and layout. Think about how the website is looks for users with disabilities.
+        Respond as if you are talking to a website developer looking for guidance, and do not repeat the prompt in your answer or mention the word WCAG.
+        If the image is not a website screenshot, simply return "Sorry, I can't help with that."
+        Return your answer in a paragraph format, not in a list. It should be concise and simple.
+    """
+
+    # Read and encode the image
+    image_data = file.read()
+    encoded_image = base64.b64encode(image_data).decode("utf-8")
+
+    # Prepare the request body
+    body = json.dumps(
+        {
+            "anthropic_version": "",
+            "max_tokens": 1000,
+            "messages": [
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "image",
+                            "source": {
+                                "type": "base64",
+                                "media_type": "image/jpeg",
+                                "data": encoded_image,
+                            },
+                        },
+                        {
+                            "type": "text",
+                            "text": prompt,
+                        },
+                    ],
+                }
+            ],
+        }
+    )
+
+    # Invoke the Claude model
+    response = client.invoke_model(modelId=model_id, body=body)
+
+    # Process the response
+    response_body = json.loads(response.get("body").read())
+
+    # Extract suggestions from response
+    suggestions = []
+    if "content" in response_body:
+        for item in response_body["content"]:
+            if "text" in item:
+                suggestions.append(item["text"])
+
+    # Return the suggestions in the required format
+    return {
+        "suggestions": [
+            {"suggestionTitle": "Visual Insights", "suggestion": suggestion}
+            for suggestion in suggestions
+        ]
+    }
+
+
 # Helper function to get structured response
 def getStructuredResponse(user_message, prompt):
-    client = instructor.from_anthropic(AnthropicBedrock())
+    structured_client = instructor.from_anthropic(AnthropicBedrock())
 
-    resp = client.messages.create(
+    resp = structured_client.messages.create(
         model="anthropic.claude-3-5-sonnet-20240620-v1:0",
         max_tokens=1024,
         messages=[
