@@ -3,7 +3,7 @@
 	--secondary-color: #e6d696;
 	--text-color: #333333;
 	--background-color: #ffffff;
-	--input-background: #f0f8ff; /* Light blue, complementary to pale yellow */
+	--input-background: #f0f8ff;
 	--button-color: #4a90e2;
 	--button-hover-color: #357abd;
 }
@@ -19,41 +19,32 @@ body {
 	color: var(--text-color);
 }
 
-/* Main app container */
 .app {
 	min-height: 100vh;
 	width: 100%;
 	display: flex;
-	flex-direction: column;
-	align-items: center;
-	background: linear-gradient(135deg, rgba(242, 230, 182, 0.3), rgba(230, 214, 150, 0.3)),
-		linear-gradient(
-			45deg,
-			rgba(242, 230, 182, 0.1) 25%,
-			transparent 25%,
-			transparent 75%,
-			rgba(230, 214, 150, 0.1) 75%,
-			rgba(230, 214, 150, 0.1)
-		),
-		linear-gradient(
-			45deg,
-			rgba(230, 214, 150, 0.1) 25%,
-			transparent 25%,
-			transparent 75%,
-			rgba(242, 230, 182, 0.1) 75%,
-			rgba(242, 230, 182, 0.1)
-		);
-	background-size: 100% 100%, 60px 60px, 60px 60px;
-	background-position: 0 0, 30px 30px, 0 0;
+	flex-direction: row;
+	align-items: stretch;
+	background: linear-gradient(135deg, rgba(242, 230, 182, 0.3), rgba(230, 214, 150, 0.3));
 }
 
-/* Header styles */
+.input-container {
+	width: 100%;
+	transition: width 0.5s ease-in-out;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+}
+
+.app.submitted .input-container {
+	width: 50%;
+}
+
 .app-header {
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	gap: 1rem;
-	width: 100%;
 	padding: 2rem 0;
 }
 
@@ -78,23 +69,12 @@ h1 {
 	font-weight: 700;
 }
 
-.content-container {
-	display: flex;
-	flex-direction: column;
-	gap: 2rem;
-	width: 100%;
-	max-width: 800px;
+.input-section {
 	padding: 2rem;
 	box-sizing: border-box;
-}
-
-/* Input and output sections */
-.input-section,
-.output-section {
-	background-color: var(--input-background);
-	padding: 1.5rem;
-	border-radius: 8px;
-	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+	display: flex;
+	flex-direction: column;
+	height: 100%;
 }
 
 h2 {
@@ -104,7 +84,6 @@ h2 {
 	margin-bottom: 1rem;
 }
 
-/* Textarea styles */
 textarea {
 	width: 100%;
 	background-color: var(--background-color);
@@ -113,10 +92,15 @@ textarea {
 	border: 1px solid #cccccc;
 	font-size: 1rem;
 	line-height: 1.5;
-	min-height: 150px;
-	resize: vertical;
+	height: 150px;
+	resize: none;
 	margin-bottom: 1rem;
-	transition: border-color 0.3s ease;
+	transition: border-color 0.3s ease, height 0.5s ease-in-out;
+}
+
+.app.submitted textarea {
+	height: calc(70vh);
+	flex-grow: 1;
 }
 
 textarea:focus {
@@ -135,6 +119,7 @@ button {
 	font-weight: 600;
 	cursor: pointer;
 	transition: background-color 0.3s ease, transform 0.1s ease;
+	align-self: flex-start;
 }
 
 button:hover {
@@ -150,52 +135,54 @@ button:disabled {
 	cursor: not-allowed;
 }
 
-/* Response box */
-.response-box {
-	background-color: var(--background-color);
-	padding: 0.75rem;
-	border-radius: 4px;
-	border: 1px solid #cccccc;
-	font-size: 1rem;
-	line-height: 1.5;
-	white-space: pre-wrap;
-	word-wrap: break-word;
-	overflow-wrap: break-word;
-	overflow-y: auto;
-	min-height: 150px;
-	max-height: 400px; /* Limit the height and enable vertical scrolling if needed */
+.output-container {
+	width: 0;
+	overflow: hidden;
+	transition: width 0.5s ease-in-out;
+	padding: 2rem;
+	box-sizing: border-box;
 }
 
-pre {
-	font-family: "Consolas", "Monaco", "Andale Mono", "Ubuntu Mono", monospace;
-	margin: 0;
-	white-space: pre-wrap;
-	word-wrap: break-word;
-	overflow-wrap: break-word;
+.app.submitted .output-container {
+	width: 50%;
 }
 
-.loading-text,
-.placeholder-text {
+.loading-text {
 	color: #7f8c8d;
+	font-size: 1.2rem;
+	text-align: center;
 }
 
-/* Responsive design */
-@media (max-width: 600px) {
-	.app-header {
+.suggestion-section,
+.visual-suggestion-section {
+	margin-bottom: 20px; /* Space between sections */
+}
+
+.suggestion-list,
+.visual-suggestion-list {
+	display: grid; /* If you're using grid layout */
+	gap: 10px; /* Space between suggestion cards */
+}
+
+@media (max-width: 768px) {
+	.app {
 		flex-direction: column;
-		text-align: center;
 	}
 
-	h1 {
-		font-size: 2rem;
+	.app.submitted .input-container,
+	.app.submitted .output-container {
+		width: 100%;
 	}
 
-	.content-container {
-		padding: 1rem;
+	.input-container {
+		min-height: 50vh;
 	}
 
-	.input-section,
-	.output-section {
-		padding: 1rem;
+	.output-container {
+		min-height: 50vh;
+	}
+
+	.app.submitted textarea {
+		height: 300px;
 	}
 }
