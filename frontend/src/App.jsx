@@ -1,18 +1,22 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
+import React, { useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import newHeroImage from "./assets/newimage.png";
 import SuggestionCard from "./components/SuggestionCard";
 import "./App.css";
 
 function App() {
 	const [inputText, setInputText] = useState("");
 	const [file, setFile] = useState(null);
-	const [imagePreview, setImagePreview] = useState(null); // For image preview
+	const [imagePreview, setImagePreview] = useState(null);
 	const [codeSuggestions, setCodeSuggestions] = useState([]);
 	const [visualSuggestions, setVisualSuggestions] = useState([]);
 	const [loading, setLoading] = useState(false);
 	const [submitted, setSubmitted] = useState(false);
-	const apiUrl = "http://3.86.6.230:5000/api"; // Replace with actual backend API URL
+	const [url, setUrl] = useState("");
+	const apiUrl = "http://127.0.0.1:5000/api";
+
+	const navigate = useNavigate();
+	const fileInputRef = useRef(null);
 
 	const handleInputChange = (e) => {
 		setInputText(e.target.value);
@@ -24,13 +28,12 @@ function App() {
 			const allowedExtensions = /(\.html|\.css|\.js|\.jpg|\.jpeg|\.png|\.gif)$/i;
 			if (!allowedExtensions.exec(selectedFile.name)) {
 				alert("Only HTML, CSS, JS, or image files are allowed.");
-				e.target.value = ""; // Reset the input
+				e.target.value = "";
 				return;
 			}
 
 			setFile(selectedFile);
 
-			// If the file is an image, create a preview
 			if (selectedFile.type.startsWith("image/")) {
 				const reader = new FileReader();
 				reader.onload = (e) => setImagePreview(e.target.result);
@@ -54,12 +57,10 @@ function App() {
 			const formDataCode = new FormData();
 			const formDataImage = new FormData();
 
-			// If there's input text, prepare formData for code
 			if (inputText.trim()) {
 				formDataCode.append("code", inputText);
 			}
 
-			// If a file is provided, prepare formData for image
 			if (file) {
 				if (file.type.startsWith("image/")) {
 					formDataImage.append("image", file);
@@ -68,7 +69,6 @@ function App() {
 				}
 			}
 
-			// Call backend for code suggestions
 			let codeSuggestionsResponse = [];
 			if (formDataCode.has("code") || formDataCode.has("file")) {
 				const responseCode = await fetch(apiUrl, {
@@ -81,7 +81,6 @@ function App() {
 				}
 			}
 
-			// Call backend for visual suggestions (image)
 			let visualSuggestionsResponse = [];
 			if (formDataImage.has("image")) {
 				const responseImage = await fetch(apiUrl, {
@@ -94,7 +93,6 @@ function App() {
 				}
 			}
 
-			// Set the suggestions
 			setCodeSuggestions(codeSuggestionsResponse);
 			setVisualSuggestions(visualSuggestionsResponse);
 		} catch (error) {
@@ -104,62 +102,87 @@ function App() {
 		}
 	};
 
+	const handleOpenSimulation = () => {
+		if (!url.trim()) {
+			alert("Please enter a valid URL.");
+			return;
+		}
+		navigate(`/simulation?url=${encodeURIComponent(url)}`);
+	};
+
+	const triggerFileInput = () => {
+		fileInputRef.current.click();
+	};
+
 	return (
-		<div className={`app ${submitted ? "submitted" : ""}`}>
-			<div className="input-container">
-				{!submitted && (
-					<header className="app-header">
-						<div className="logos">
-							<a href="https://vitejs.dev" target="_blank" rel="noreferrer">
-								<img src={viteLogo} className="logo" alt="Vite logo" />
-							</a>
-							<a href="https://react.dev" target="_blank" rel="noreferrer">
-								<img src={reactLogo} className="logo react" alt="React logo" />
-							</a>
-						</div>
+		<div className="app">
+			<header className="hero-section">
+				<div className="hero-content">
+					<div className="hero-left">
 						<h1>AccessAI</h1>
-					</header>
-				)}
-				<div className="input-section">
-					<h2>Enter Your Code or Attach a File</h2>
+						<p>Revolutionizing web accessibility</p>
+					</div>
+				</div>
+			</header>
+
+			<div className={`content-wrapper ${submitted ? "submitted" : ""}`}>
+				<section className="input-section">
+					<h2>Submit Your Code or File</h2>
 					<textarea
 						value={inputText}
 						onChange={handleInputChange}
 						placeholder="Enter your code here..."
 						rows={10}
 					/>
-					<input
-						type="file"
-						accept=".html,.css,.js,.jpg,.jpeg,.png,.gif"
-						onChange={handleFileChange}
-					/>
-
-					{/* Image Preview */}
+					<div className="file-upload">
+						<input
+							type="file"
+							accept=".html,.css,.js,.jpg,.jpeg,.png,.gif"
+							onChange={handleFileChange}
+							className="file-input"
+							ref={fileInputRef}
+						/>
+						<button onClick={triggerFileInput} className="file-upload-button">
+							Choose File
+						</button>
+						{file && <span className="file-name">{file.name}</span>}
+					</div>
 					{imagePreview && (
 						<div className="image-preview">
-							<img
-								src={imagePreview}
-								alt="Preview"
-								style={{ width: "200px", height: "auto" }}
-							/>
+							<img src={imagePreview} alt="Preview" />
 						</div>
 					)}
-
-					<button onClick={handleSubmit} disabled={loading}>
-						{loading ? "Processing..." : "Submit to LLM"}
+					<button onClick={handleSubmit} disabled={loading} className="submit-button">
+						{loading ? "Processing..." : "Submit"}
 					</button>
-				</div>
-			</div>
-			{submitted && (
-				<div className="output-container">
-					{loading ? (
-						<p className="loading-text">Loading...</p>
-					) : (
-						<>
-							{codeSuggestions.length > 0 && (
-								<div className="suggestion-section">
-									<h3 style={{ textAlign: "center" }}>Code Suggestions</h3>
-									<div className="suggestion-list">
+
+					<div className="simulation-section">
+						<h3>Or Open a Simulation</h3>
+						<input
+							type="text"
+							placeholder="Enter a URL"
+							value={url}
+							onChange={(e) => setUrl(e.target.value)}
+						/>
+						<button
+							onClick={handleOpenSimulation}
+							disabled={!url}
+							className="open-simulation-button"
+						>
+							Open Simulation
+						</button>
+					</div>
+				</section>
+
+				{submitted && (
+					<section className="output-section">
+						{loading ? (
+							<p className="loading-text">Loading...</p>
+						) : (
+							<>
+								{codeSuggestions.length > 0 && (
+									<div className="suggestion-section">
+										<h3>Code Suggestions</h3>
 										{codeSuggestions.map((suggestion, index) => (
 											<SuggestionCard
 												key={index}
@@ -168,12 +191,10 @@ function App() {
 											/>
 										))}
 									</div>
-								</div>
-							)}
-
-							{visualSuggestions.length > 0 && (
-								<div className="visual-suggestion-section" style={{ marginTop: "20px" }}>
-									<div className="visual-suggestion-list">
+								)}
+								{visualSuggestions.length > 0 && (
+									<div className="visual-suggestion-section">
+										<h3>Visual Suggestions</h3>
 										{visualSuggestions.map((suggestion, index) => (
 											<SuggestionCard
 												key={index}
@@ -182,12 +203,12 @@ function App() {
 											/>
 										))}
 									</div>
-								</div>
-							)}
-						</>
-					)}
-				</div>
-			)}
+								)}
+							</>
+						)}
+					</section>
+				)}
+			</div>
 		</div>
 	);
 }
