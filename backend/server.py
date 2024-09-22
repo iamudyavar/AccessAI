@@ -66,6 +66,7 @@ def getLLMResponse():
             Provide the specific line of code that needs to be changed for each list element, if a change is necessary.
             Next to each of your suggestions, add parentheses with the specific WCAG 2.2 issue name and section number.
             If the user does not provide website code, simply return "Sorry, I can't help with that."
+            Also, look at the text inside of the website and ensure that the language is inclusive and accessible to a non-English speaker.
             """
 
         # Get the structured response from the model
@@ -183,4 +184,4 @@ def getStructuredResponse(user_message, prompt):
 
 # Run the application
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host="0.0.0.0", port=5000)
