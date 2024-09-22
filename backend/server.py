@@ -329,6 +329,7 @@ import os
 # Setup
 app = Flask(__name__)
 CORS(app)
+#CORS(app, resources={r"/api/*": {"origins": "http://52.206.110.206:5173"}})
 client = boto3.client("bedrock-runtime", region_name="us-east-1")
 model_id = "anthropic.claude-3-5-sonnet-20240620-v1:0"
 
