@@ -12,7 +12,7 @@ function App() {
 	const [visualSuggestions, setVisualSuggestions] = useState([]);
 	const [loading, setLoading] = useState(false);
 	const [submitted, setSubmitted] = useState(false);
-	const apiUrl = "http://127.0.0.1:5000/api"; // Replace with actual backend API URL
+	const apiUrl = "http://3.86.6.230:5000/api"; // Replace with actual backend API URL
 
 	const handleInputChange = (e) => {
 		setInputText(e.target.value);
