@@ -120,10 +120,7 @@ function App() {
 				<div className="hero-content">
 					<div className="hero-left">
 						<h1>AccessAI</h1>
-						<p>
-							Upload your code or images to receive suggestions to make your project more
-							inclusive.
-						</p>
+						<p>Revolutionizing web accessibility</p>
 					</div>
 				</div>
 			</header>
@@ -156,7 +153,7 @@ function App() {
 						</div>
 					)}
 					<button onClick={handleSubmit} disabled={loading} className="submit-button">
-						{loading ? "Processing..." : "Submit to LLM"}
+						{loading ? "Processing..." : "Submit"}
 					</button>
 
 					<div className="simulation-section">
@@ -167,7 +164,11 @@ function App() {
 							value={url}
 							onChange={(e) => setUrl(e.target.value)}
 						/>
-						<button onClick={handleOpenSimulation} disabled={!url}>
+						<button
+							onClick={handleOpenSimulation}
+							disabled={!url}
+							className="open-simulation-button"
+						>
 							Open Simulation
 						</button>
 					</div>

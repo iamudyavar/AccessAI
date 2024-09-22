@@ -1,3 +1,7 @@
+* {
+	box-sizing: border-box;
+}
+
 body {
 	font-family: "Montserrat", sans-serif;
 	background-color: #f5f5f5;
@@ -46,17 +50,17 @@ body {
 	color: #fff;
 }
 
-/* Content Wrapper */
 .content-wrapper {
 	display: flex;
 	transition: all 0.5s ease;
-	max-width: 100%;
-	overflow: hidden;
-	margin: 20px auto;
+	max-width: 100%; /* Allow it to take full width */
+	margin: 20px auto; /* Center container */
+	overflow: hidden; /* Prevent any child overflow */
+	padding: 20px;
 }
 
 .content-wrapper.submitted {
-	max-width: 160%; /* Increased to accommodate both sections */
+	flex-wrap: wrap; /* Wrap items if necessary */
 }
 
 /* Input Section */
@@ -134,6 +138,26 @@ textarea {
 	height: auto;
 }
 
+.open-simulation-button {
+	padding: 10px 20px; /* Similar padding */
+	background-color: #5a9abf; /* Match background color */
+	color: #fff; /* White text color */
+	border: none; /* No border */
+	border-radius: 5px; /* Rounded corners */
+	cursor: pointer; /* Pointer on hover */
+	font-size: 1rem; /* Consistent font size */
+	transition: background-color 0.3s ease; /* Smooth transition */
+}
+
+.open-simulation-button:disabled {
+	background-color: #c0c0c0; /* Disabled state color */
+	cursor: not-allowed; /* Not allowed cursor */
+}
+
+.open-simulation-button:hover:not(:disabled) {
+	background-color: #4a8bad; /* Darker color on hover */
+}
+
 /* Submit Button */
 .submit-button {
 	padding: 15px 30px;
@@ -155,18 +179,20 @@ textarea {
 	background-color: #4a8bad;
 }
 
-/* Output Section */
 .output-section {
-	flex: 0 0 50%;
-	padding: 50px 20px;
+	flex: 1; /* Allow it to grow and fill available space */
+	padding: 20px;
 	background-color: #fff;
 	border-radius: 15px;
 	box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
-	max-width: 800px;
-	margin-left: 20px;
-	display: none;
-	opacity: 0;
+	max-width: 800px; /* Keep it within a maximum width */
+	width: 100%; /* Ensure it uses the full width of the container */
+	display: flex;
+	flex-direction: column; /* Allow stacking of children */
+	align-items: center; /* Center content */
+	opacity: 0; /* Hidden by default */
 	transition: opacity 0.5s ease;
+	overflow: hidden; /* Prevent overflow */
 }
 
 .content-wrapper.submitted .output-section {
@@ -174,13 +200,14 @@ textarea {
 	opacity: 1;
 }
 
-/* Suggestion Section */
 .suggestion-section,
 .visual-suggestion-section {
-	padding: 20px;
+	padding: 20px; /* Padding on all sides */
 	background-color: #f9f9f9;
 	border-radius: 10px;
 	margin-top: 20px;
+	max-width: 800px; /* Limit width */
+	width: 100%; /* Use full width available */
 }
 
 h3 {
