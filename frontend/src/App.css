@@ -1,188 +1,166 @@
-:root {
-	--primary-color: #f2e6b6;
-	--secondary-color: #e6d696;
-	--text-color: #333333;
-	--background-color: #ffffff;
-	--input-background: #f0f8ff;
-	--button-color: #4a90e2;
-	--button-hover-color: #357abd;
-}
-
+/* General Styles */
 body {
-	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell",
-		"Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-	margin: 0;
-	padding: 0;
-	background-color: var(--background-color);
-	color: var(--text-color);
+    font-family: 'Montserrat', sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
 }
 
 .app {
-	min-height: 100vh;
-	width: 100%;
-	display: flex;
-	flex-direction: row;
-	align-items: stretch;
-	background: linear-gradient(135deg, rgba(242, 230, 182, 0.3), rgba(230, 214, 150, 0.3));
+    text-align: center;
 }
 
-.input-container {
-	width: 100%;
-	transition: width 0.5s ease-in-out;
-	overflow: hidden;
-	display: flex;
-	flex-direction: column;
+/* Hero Section */
+.hero-section {
+    height: 100vh;
+    background-image: url('./assets/newimage.png'); /* Background image */
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
 }
 
-.app.submitted .input-container {
-	width: 50%;
+.hero-content {
+    background-color: rgba(0, 0, 0, 0.6); /* Slight overlay to make text readable */
+    padding: 40px;
+    border-radius: 10px;
+    max-width: 600px;
 }
 
-.app-header {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	gap: 1rem;
-	padding: 2rem 0;
+.hero-left h1 {
+    font-size: 4rem;
+    color: #5A9ABF; /* Matching color with Get Started button */
+    margin-bottom: 20px;
 }
 
-.logos {
-	display: flex;
-	gap: 1rem;
+.hero-left p {
+    font-size: 1.2rem;
+    color: #ddd;
 }
 
-.logo {
-	height: 3em;
-	transition: filter 0.3s ease;
+.cta-button {
+    background-color: #5A9ABF;
+    color: #fff;
+    padding: 15px 40px;
+    border-radius: 30px;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
-.logo:hover {
-	filter: brightness(1.2);
+.cta-button:hover {
+    background-color: #4688A8;
+    transform: scale(1.05);
 }
 
-h1 {
-	font-size: 2.5rem;
-	color: var(--text-color);
-	margin: 0;
-	font-weight: 700;
-}
-
+/* Input Section */
 .input-section {
-	padding: 2rem;
-	box-sizing: border-box;
-	display: flex;
-	flex-direction: column;
-	height: 100%;
+    padding: 100px 20px;
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
+    margin: 50px auto;
+    max-width: 800px;
+    border: 2px dashed #5A9ABF;
 }
 
-h2 {
-	font-size: 1.25rem;
-	color: var(--text-color);
-	margin-top: 0;
-	margin-bottom: 1rem;
+.section-heading {
+    font-size: 2rem;
+    font-family: 'Roboto', sans-serif;
+    color: #272838;
+    margin-bottom: 20px;
 }
 
-textarea {
-	width: 100%;
-	background-color: var(--background-color);
-	padding: 0.75rem;
-	border-radius: 4px;
-	border: 1px solid #cccccc;
-	font-size: 1rem;
-	line-height: 1.5;
-	height: 150px;
-	resize: none;
-	margin-bottom: 1rem;
-	transition: border-color 0.3s ease, height 0.5s ease-in-out;
+/* Code Input Box */
+.code-input {
+    width: 100%;
+    padding: 15px;
+    border-radius: 10px;
+    border: 2px dashed #5A9ABF;
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+    background-color: #f0f0f0;
+    font-family: 'Roboto Mono', monospace;
 }
 
-.app.submitted textarea {
-	height: calc(70vh);
-	flex-grow: 1;
+/* File Upload */
+.file-upload {
+    margin-bottom: 20px;
 }
 
-textarea:focus {
-	border-color: var(--button-color);
-	outline: none;
-	box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.25);
+.file-input {
+    display: none;
 }
 
-button {
-	padding: 0.5rem 1rem;
-	background-color: var(--button-color);
-	color: white;
-	border: none;
-	border-radius: 4px;
-	font-size: 1rem;
-	font-weight: 600;
-	cursor: pointer;
-	transition: background-color 0.3s ease, transform 0.1s ease;
-	align-self: flex-start;
+.dotted-border {
+    border: 2px dashed #5A9ABF;
+    padding: 12px 30px;
+    color: #5A9ABF;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
-button:hover {
-	background-color: var(--button-hover-color);
+.dotted-border:hover {
+    background-color: #E9F5DB;
+    transform: scale(1.05);
 }
 
-button:active {
-	transform: scale(0.98);
+.image-preview {
+    max-width: 100%;
+    margin-top: 20px;
+    border-radius: 10px;
 }
 
-button:disabled {
-	background-color: #95a5a6;
-	cursor: not-allowed;
+/* Submit Button */
+.submit-button {
+    padding: 15px 30px;
+    background-color: #5A9ABF;
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    margin-top: 20px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
-.output-container {
-	width: 0;
-	overflow: hidden;
-	transition: width 0.5s ease-in-out;
-	padding: 2rem;
-	box-sizing: border-box;
+.submit-button:hover {
+    background-color: #4688A8;
+    transform: scale(1.05);
 }
 
-.app.submitted .output-container {
-	width: 50%;
+/* Output Box */
+.output-box {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: #f1f1f1;
+    border-radius: 10px;
+    color: #272838;
+    font-size: 1.2rem;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05);
 }
 
-.loading-text {
-	color: #7f8c8d;
-	font-size: 1.2rem;
-	text-align: center;
+/* Additional Content Section */
+.additional-content {
+    padding: 80px 20px;
+    background-color: #f7f7f7;
 }
 
-.suggestion-section,
-.visual-suggestion-section {
-	margin-bottom: 20px; /* Space between sections */
+.additional-content h2 {
+    font-size: 2rem;
+    color: #272838;
+    margin-bottom: 20px;
 }
 
-.suggestion-list,
-.visual-suggestion-list {
-	display: grid; /* If you're using grid layout */
-	gap: 10px; /* Space between suggestion cards */
-}
-
-@media (max-width: 768px) {
-	.app {
-		flex-direction: column;
-	}
-
-	.app.submitted .input-container,
-	.app.submitted .output-container {
-		width: 100%;
-	}
-
-	.input-container {
-		min-height: 50vh;
-	}
-
-	.output-container {
-		min-height: 50vh;
-	}
-
-	.app.submitted textarea {
-		height: 300px;
-	}
+.additional-content p {
+    font-size: 1.1rem;
+    color: #666;
+    max-width: 800px;
+    margin: 0 auto 20px;
 }
