@@ -24,8 +24,16 @@ body {
 	width: 100%;
 	display: flex;
 	flex-direction: row;
-	align-items: stretch;
+	justify-content: center;
+	align-items: center;
 	background: linear-gradient(135deg, rgba(242, 230, 182, 0.3), rgba(230, 214, 150, 0.3));
+	padding: 20px; /* Ensures there’s some padding around the container */
+}
+
+.container {
+	display: flex;
+	width: 100%;
+	max-width: 1200px; /* Adjust this value based on your design */
 }
 
 .input-container {
@@ -34,10 +42,11 @@ body {
 	overflow: hidden;
 	display: flex;
 	flex-direction: column;
+	margin-right: 20px; /* Space between input and suggestions */
 }
 
 .app.submitted .input-container {
-	width: 50%;
+	width: 50%; /* Make input container shrink when submitted */
 }
 
 .app-header {
@@ -145,10 +154,13 @@ button:disabled {
 	transition: width 0.5s ease-in-out;
 	padding: 2rem;
 	box-sizing: border-box;
+	flex: 1;
+	display: flex;
+	flex-direction: column;
 }
 
 .app.submitted .output-container {
-	width: 50%;
+	width: 50%; /* Expand suggestions area when submitted */
 }
 
 .loading-text {
@@ -164,7 +176,8 @@ button:disabled {
 
 .suggestion-list,
 .visual-suggestion-list {
-	display: grid; /* If you're using grid layout */
+	display: flex;
+	flex-direction: column; /* Align suggestions in a column */
 	gap: 10px; /* Space between suggestion cards */
 }
 
@@ -186,6 +199,10 @@ button:disabled {
 	border: none;
 	border-radius: 5px;
 	cursor: pointer;
+}
+
+.image-preview {
+	margin-top: 20px;
 }
 
 @media (max-width: 768px) {

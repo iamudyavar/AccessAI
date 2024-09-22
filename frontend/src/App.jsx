@@ -119,72 +119,114 @@ function App() {
 
 	return (
 		<div className={`app ${submitted ? "submitted" : ""}`}>
-			<div className="input-container">
-				{!submitted && (
-					<header className="app-header">
-						<div className="logos">
-							<a href="https://vitejs.dev" target="_blank" rel="noreferrer">
-								<img src={viteLogo} className="logo" alt="Vite logo" />
-							</a>
-							<a href="https://react.dev" target="_blank" rel="noreferrer">
-								<img src={reactLogo} className="logo react" alt="React logo" />
-							</a>
-						</div>
-						<h1>AccessAI</h1>
-					</header>
-				)}
-				<div className="input-section">
-					<h2>Enter Your Code or Attach a File</h2>
-					<textarea
-						value={inputText}
-						onChange={handleInputChange}
-						placeholder="Enter your code here..."
-						rows={10}
-					/>
-					<input
-						type="file"
-						accept=".html,.css,.js,.jpg,.jpeg,.png,.gif"
-						onChange={handleFileChange}
-					/>
-
-					{/* Image Preview */}
-					{imagePreview && (
-						<div className="image-preview">
-							<img
-								src={imagePreview}
-								alt="Preview"
-								style={{ width: "200px", height: "auto" }}
-							/>
-						</div>
+			<div className="container">
+				{" "}
+				{/* Added container for flex layout */}
+				<div className="input-container">
+					{!submitted && (
+						<header className="app-header">
+							<div className="logos">
+								<a href="https://vitejs.dev" target="_blank" rel="noreferrer">
+									<img src={viteLogo} className="logo" alt="Vite logo" />
+								</a>
+								<a href="https://react.dev" target="_blank" rel="noreferrer">
+									<img src={reactLogo} className="logo react" alt="React logo" />
+								</a>
+							</div>
+							<h1>AccessAI</h1>
+						</header>
 					)}
-
-					<button onClick={handleSubmit} disabled={loading}>
-						{loading ? "Processing..." : "Submit to LLM"}
-					</button>
-
-					{/* URL Input and Open Simulation Button */}
-					<div className="simulation-section">
-						<h3>Or Open a Simulation</h3>
-						<input
-							type="text"
-							placeholder="Enter a URL"
-							value={url}
-							onChange={(e) => setUrl(e.target.value)}
-							style={{ width: "100%", padding: "8px" }}
+					<div className="input-section">
+						<h2>Enter Your Code or Attach a File</h2>
+						<textarea
+							value={inputText}
+							onChange={handleInputChange}
+							placeholder="Enter your code here..."
+							rows={10}
 						/>
-						<button
-							onClick={handleOpenSimulation}
-							style={{
-								marginTop: "10px",
-								backgroundColor: url ? "#007bff" : "#ccc", // Change background color
-								cursor: url ? "pointer" : "not-allowed", // Change cursor based on input
-							}}
-							disabled={!url} // Disable the button if URL is empty
-						>
-							Open Simulation
+						<input
+							type="file"
+							accept=".html,.css,.js,.jpg,.jpeg,.png,.gif"
+							onChange={handleFileChange}
+						/>
+
+						{/* Image Preview */}
+						{imagePreview && (
+							<div className="image-preview">
+								<img
+									src={imagePreview}
+									alt="Preview"
+									style={{ width: "200px", height: "auto" }}
+								/>
+							</div>
+						)}
+
+						<button onClick={handleSubmit} disabled={loading}>
+							{loading ? "Processing..." : "Submit to LLM"}
 						</button>
+
+						{/* URL Input and Open Simulation Button */}
+						<div className="simulation-section">
+							<h3>Or Open a Simulation</h3>
+							<input
+								type="text"
+								placeholder="Enter a URL"
+								value={url}
+								onChange={(e) => setUrl(e.target.value)}
+								style={{ width: "100%", padding: "8px" }}
+							/>
+							<button
+								onClick={handleOpenSimulation}
+								style={{
+									marginTop: "10px",
+									backgroundColor: url ? "#007bff" : "#ccc", // Change background color
+									cursor: url ? "pointer" : "not-allowed", // Change cursor based on input
+								}}
+								disabled={!url} // Disable the button if URL is empty
+							>
+								Open Simulation
+							</button>
+						</div>
 					</div>
 				</div>
+				{submitted && (
+					<div className="output-container">
+						{loading ? (
+							<p className="loading-text">Loading...</p>
+						) : (
+							<>
+								{codeSuggestions.length > 0 && (
+									<div className="suggestion-section">
+										<h3 style={{ textAlign: "center" }}>Code Suggestions</h3>
+										<div className="suggestion-list">
+											{codeSuggestions.map((suggestion, index) => (
+												<SuggestionCard
+													key={index}
+													title={suggestion.suggestionTitle}
+													suggestion={suggestion.suggestion}
+												/>
+											))}
+										</div>
+									</div>
+								)}
+
+								{visualSuggestions.length > 0 && (
+									<div className="visual-suggestion-section" style={{ marginTop: "20px" }}>
+										<div className="visual-suggestion-list">
+											{visualSuggestions.map((suggestion, index) => (
+												<SuggestionCard
+													key={index}
+													title={suggestion.suggestionTitle}
+													suggestion={suggestion.suggestion}
+												/>
+											))}
+										</div>
+									</div>
+								)}
+							</>
+						)}
+					</div>
+				)}
 			</div>
 		</div>
 	);
