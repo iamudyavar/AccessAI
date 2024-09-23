@@ -14,6 +14,148 @@ body {
 	text-align: center;
 }
 
+.file-and-lens-container {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.file-upload {
+	flex: 0 0 auto;
+	margin-right: 20px;
+}
+
+.file-input {
+	display: none;
+}
+
+.file-upload-button {
+	padding: 10px 20px;
+	background-color: #5a9abf;
+	color: #fff;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	font-size: 1rem;
+	white-space: nowrap;
+}
+
+.file-name {
+	font-size: 0.9rem;
+	color: #666;
+	margin-left: 10px;
+}
+
+.lens-selection {
+	flex: 1;
+	position: relative;
+}
+
+.custom-select {
+	width: 100%;
+	font-family: "Roboto", sans-serif;
+}
+
+.select-button {
+	width: 100%;
+	padding: 10px 15px;
+	font-size: 1rem;
+	background-color: #ffffff;
+	border: 2px solid #5a9abf;
+	border-radius: 5px;
+	cursor: pointer;
+	text-align: left;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.dropdown-arrow {
+	font-size: 0.8rem;
+	transition: transform 0.3s ease;
+}
+
+.select-items {
+	position: absolute;
+	background-color: #ffffff;
+	top: 100%;
+	left: 0;
+	right: 0;
+	z-index: 99;
+	border: 2px solid #5a9abf;
+	border-top: none;
+	border-radius: 0 0 5px 5px;
+	max-height: 200px;
+	overflow-y: auto;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.select-option {
+	padding: 10px 15px;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	transition: background-color 0.2s ease;
+}
+
+.select-option:hover {
+	background-color: #f0f0f0;
+}
+
+.select-option input[type="checkbox"] {
+	margin-right: 10px;
+}
+
+.submit-button {
+	padding: 15px 30px;
+	background-color: #5a9abf;
+	color: #fff;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	font-size: 1.2rem;
+	transition: background-color 0.3s ease;
+	margin-top: 20px;
+}
+
+.submit-button:disabled {
+	background-color: #c0c0c0;
+	cursor: not-allowed;
+}
+
+.submit-button:hover:not(:disabled) {
+	background-color: #4a8bad;
+}
+
+.hero-title {
+	font-size: 4rem;
+	margin-bottom: 20px;
+	color: #fff;
+	font-weight: 700;
+	letter-spacing: 2px;
+	text-transform: uppercase;
+}
+
+.hero-subtitle {
+	font-size: 1.8rem;
+	color: #fff;
+	font-weight: 400;
+}
+
+/* Image Preview */
+.image-preview {
+	margin-top: 20px;
+	margin-bottom: 20px;
+	border-radius: 10px;
+	overflow: hidden;
+	text-align: center; /* Center the image within the container */
+}
+
+.image-preview img {
+	width: 200px; /* Set a fixed width */
+	height: auto; /* Maintain aspect ratio */
+}
+
 /* Hero Section */
 .hero-section {
 	height: 100vh;
@@ -39,22 +181,50 @@ body {
 	margin-left: 5%;
 }
 
-.hero-left h1 {
-	font-size: 3rem;
-	margin-bottom: 20px;
-	color: #fff;
+.hero-left {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
 }
 
-.hero-left p {
-	font-size: 1.2rem;
+.hero-title {
+	font-size: 4rem;
+	margin-bottom: 20px;
 	color: #fff;
+	font-weight: 700;
+	letter-spacing: 2px;
+	text-transform: uppercase;
+}
+
+.hero-subtitle {
+	font-size: 1.8rem;
+	color: #fff;
+	font-weight: 400;
+	margin-bottom: 30px;
+}
+
+.get-started-button {
+	padding: 15px 30px;
+	background-color: #5a9abf;
+	color: #fff;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	font-size: 1.2rem;
+	transition: background-color 0.3s ease;
+	text-transform: uppercase;
+	font-weight: 600;
+}
+
+.get-started-button:hover {
+	background-color: #4a8bad;
 }
 
 .content-wrapper {
 	display: flex;
 	transition: all 0.5s ease;
 	max-width: 100%; /* Allow it to take full width */
-	margin: 20px auto; /* Center container */
+
 	overflow: hidden; /* Prevent any child overflow */
 	padding: 20px;
 }
@@ -66,7 +236,7 @@ body {
 /* Input Section */
 .input-section {
 	flex: 0 0 100%;
-	padding: 50px 20px;
+	padding: 30px 20px;
 	background-color: #fff;
 	border-radius: 15px;
 	box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
@@ -100,7 +270,6 @@ textarea {
 
 /* File Upload */
 .file-upload {
-	margin-bottom: 20px;
 	display: flex;
 	align-items: center;
 }
@@ -164,7 +333,7 @@ textarea {
 	background-color: #5a9abf;
 	color: #fff;
 	border: none;
-	border-radius: 20px;
+	border-radius: 5px;
 	cursor: pointer;
 	font-size: 1.2rem;
 	transition: background-color 0.3s ease;

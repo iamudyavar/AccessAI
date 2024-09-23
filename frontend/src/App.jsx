@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import newHeroImage from "./assets/newimage.png";
 import SuggestionCard from "./components/SuggestionCard";
@@ -13,10 +13,34 @@ function App() {
 	const [loading, setLoading] = useState(false);
 	const [submitted, setSubmitted] = useState(false);
 	const [url, setUrl] = useState("");
+	const [selectedLenses, setSelectedLenses] = useState([]);
+	const [isLensesOpen, setIsLensesOpen] = useState(false);
 	const apiUrl = "https://gwnpw5ju4l.execute-api.us-east-1.amazonaws.com/Stage3/api";
 
 	const navigate = useNavigate();
 	const fileInputRef = useRef(null);
+	const dropdownRef = useRef(null);
+	const contentRef = useRef(null);
+
+	useEffect(() => {
+		const handleClickOutside = (event) => {
+			if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+				setIsLensesOpen(false);
+			}
+		};
+
+		document.addEventListener("mousedown", handleClickOutside);
+		return () => {
+			document.removeEventListener("mousedown", handleClickOutside);
+		};
+	}, []);
+
+	const lensOptions = [
+		{ value: "Visual Disabilities", label: "Visual Disabilities" },
+		{ value: "Physical Disabilities", label: "Physical Disabilities" },
+		{ value: "Elderly Users", label: "Elderly Users" },
+		{ value: "Non-native English Speakers", label: "Non-native English Speaker" },
+	];
 
 	const handleInputChange = (e) => {
 		setInputText(e.target.value);
@@ -42,6 +66,12 @@ function App() {
 				setImagePreview(null);
 			}
 		}
+	};
+
+	const handleLensChange = (lens) => {
+		setSelectedLenses((prevLenses) =>
+			prevLenses.includes(lens) ? prevLenses.filter((l) => l !== lens) : [...prevLenses, lens]
+		);
 	};
 
 	const handleSubmit = async () => {
@@ -115,38 +145,79 @@ function App() {
 		fileInputRef.current.click();
 	};
 
+	const scrollToContent = () => {
+		contentRef.current.scrollIntoView({ behavior: "smooth" });
+	};
+
 	return (
 		<div className="app">
 			<header className="hero-section">
 				<div className="hero-content">
 					<div className="hero-left">
-						<h1>AccessAI</h1>
-						<p>Revolutionizing web accessibility</p>
+						<h1 className="hero-title">AccessAI</h1>
+						<p className="hero-subtitle">Revolutionizing web accessibility</p>
+						<button onClick={scrollToContent} className="get-started-button">
+							Get Started
+						</button>
 					</div>
 				</div>
 			</header>
 
-			<div className={`content-wrapper ${submitted ? "submitted" : ""}`}>
+			<div ref={contentRef} className={`content-wrapper ${submitted ? "submitted" : ""}`}>
 				<section className="input-section">
-					<h2>Submit Your Code or File</h2>
+					<h2>Check Your Website</h2>
 					<textarea
 						value={inputText}
 						onChange={handleInputChange}
 						placeholder="Enter your code here..."
 						rows={10}
 					/>
-					<div className="file-upload">
-						<input
-							type="file"
-							accept=".html,.css,.js,.jpg,.jpeg,.png,.gif"
-							onChange={handleFileChange}
-							className="file-input"
-							ref={fileInputRef}
-						/>
-						<button onClick={triggerFileInput} className="file-upload-button">
-							Choose File
-						</button>
-						{file && <span className="file-name">{file.name}</span>}
+					<div className="file-and-lens-container">
+						<div className="file-upload">
+							<input
+								type="file"
+								accept=".html,.css,.js,.jpg,.jpeg,.png,.gif"
+								onChange={handleFileChange}
+								className="file-input"
+								ref={fileInputRef}
+							/>
+							<button onClick={triggerFileInput} className="file-upload-button">
+								Choose File
+							</button>
+							{file && <span className="file-name">{file.name}</span>}
+						</div>
+						<div className="lens-selection" ref={dropdownRef}>
+							<div className="custom-select">
+								<button
+									className="select-button"
+									onClick={() => setIsLensesOpen(!isLensesOpen)}
+								>
+									{selectedLenses.length
+										? `${selectedLenses.length} Lenses`
+										: "Select Lenses"}
+									<span className="dropdown-arrow">▼</span>
+								</button>
+								{isLensesOpen && (
+									<div className="select-items">
+										{lensOptions.map((lens) => (
+											<div
+												key={lens.value}
+												className="select-option"
+												onClick={() => handleLensChange(lens.value)}
+											>
+												<input
+													type="checkbox"
+													checked={selectedLenses.includes(lens.value)}
+													onChange={() => {}}
+													onClick={(e) => e.stopPropagation()}
+												/>
+												<span>{lens.label}</span>
+											</div>
+										))}
+									</div>
+								)}
+							</div>
+						</div>
 					</div>
 					{imagePreview && (
 						<div className="image-preview">
