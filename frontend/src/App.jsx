@@ -13,7 +13,7 @@ function App() {
 	const [loading, setLoading] = useState(false);
 	const [submitted, setSubmitted] = useState(false);
 	const [url, setUrl] = useState("");
-	const apiUrl = "http://127.0.0.1:5000/api";
+	const apiUrl = "https://gwnpw5ju4l.execute-api.us-east-1.amazonaws.com/Stage3/api";
 
 	const navigate = useNavigate();
 	const fileInputRef = useRef(null);
@@ -75,6 +75,7 @@ function App() {
 					method: "POST",
 					body: formDataCode,
 				});
+
 				if (responseCode.ok) {
 					const data = await responseCode.json();
 					codeSuggestionsResponse = data.suggestions || [];
